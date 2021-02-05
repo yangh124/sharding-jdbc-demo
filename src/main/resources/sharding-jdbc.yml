@@ -1,0 +1,30 @@
+# 配置真实数据源
+dataSources: #数据源配置，可配置多个data_source_name
+  m1: !!com.alibaba.druid.pool.DruidDataSource #`!!`表示实例化该类
+    # 配置第 1 个数据源
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/course_db?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=CONVERT_TO_NULL&allowMultiQueries=true&useAffectedRows=true&useTimezone=true&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+
+props:
+  sql:
+    show: true #是否开启SQL显示，默认值: false
+
+shardingRule:
+  # 配置分片规则
+  tables:
+    course:
+      logicTable: course ##逻辑表名称
+      # 配置 course 表规则
+      actualDataNodes: m1.course_$->{1..2}
+      # 配置分库策略
+      #databaseStrategy:
+      # 配置分表策略
+      tableStrategy:
+        inline: #行表达式分片策略
+          shardingColumn: cid
+          algorithmExpression: course_$->{cid % 2 + 1} #分片算法行表达式，需符合groovy语法
+      keyGenerator: #主键生成策略
+        type: SNOWFLAKE
+        column: cid
