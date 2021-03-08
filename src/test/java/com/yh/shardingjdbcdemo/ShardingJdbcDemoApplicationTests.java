@@ -61,4 +61,13 @@ class ShardingJdbcDemoApplicationTests {
         udict.setUvalue("hhhhhh");
         udictMapper.insert(udict);
     }
+
+    @Test
+    public void masterSlave() {
+        Udict udict = new Udict();
+        udict.setUstatus("a");
+        udict.setUvalue("xxxxxx");
+        int insert = udictMapper.insert(udict);
+        System.out.println(insert > 0);
+    }
 }
